@@ -76,6 +76,7 @@ def index():
 def dump():
   msg="<pre>\n"
   for thing in Interesting.query.all():
+    print("[+++] OMG STUFF '"+str(thing.host)+"'")
     msg+=thing.host+"\n"
     msg+=thing.headers+"\n"
     msg+=thing.values+"\n\n"
