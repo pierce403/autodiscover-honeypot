@@ -58,6 +58,7 @@ def autodiscover():
       interesting.domain = request.headers.get("Host")
       interesting.headers = str(request.headers)
       interesting.values = str(request.values)
+      db.session.add(interesting)
       db.session.commit() 
 #    return send_from_directory(os.path.join(app.root_path, 'static'),'autodiscover.xml')
     return Response('<UNAUTHORIZED>', 401, {'WWW-Authenticate':'Basic realm="Login Required"'})
