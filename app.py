@@ -38,8 +38,14 @@ class Interesting(db.Model):
   values = db.Column(db.String(800))
   ctime = db.Column(DateTime, default=func.now())
 
-def init():
-  db.create_all()
+@app.before_first_request
+def setup():
+  print("[+] running setup")
+  try:
+    db.create_all()
+    print("[+] created db")
+  except:
+    print("[+] db already exists")
 
 @app.route('/autodiscover/autodiscover.xml', methods=['GET', 'POST'])
 def autodiscover():
