@@ -53,6 +53,7 @@ def autodiscover():
     print(request.values)
 
     if "Authorization" in request.headers:
+      print("[+++] ADDING NEW REQUEST")
       interesting = Interesting()
       interesting.domain = request.headers.get("Host")
       interesting.headers = str(request.headers)
