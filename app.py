@@ -20,6 +20,7 @@ from werkzeug.exceptions import Unauthorized
 
 @app.route('/autodiscover/autodiscover.xml')
 def autodiscover():
+    print(request.headers)
 #    return send_from_directory(os.path.join(app.root_path, 'static'),'autodiscover.xml')
     return Response('<UNAUTHORIZED>', 401, {'WWW-Authenticate':'Basic realm="Login Required"'})
 
