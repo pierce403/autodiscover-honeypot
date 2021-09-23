@@ -16,5 +16,4 @@ mock
 gevent
 gunicorn
 
-flask_sslify
-web3
+flask-sqlalchemy
