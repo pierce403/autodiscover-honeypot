@@ -3,11 +3,14 @@ from flask import request
 
 import time
 import flask
+import logging
 from flask import Flask
 #from flask_sslify import SSLify
 
 app = Flask(__name__,static_url_path='/static')
 #sslify = SSLify(app)
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.ERROR)
 
 import os
 import requests
