@@ -15,10 +15,11 @@ import requests
 from flask import send_from_directory
 
 import time
+from werkzeug.exceptions import Unauthorized
 
-@app.route('/autodiscover/autodiscover.xml')
-def autodiscover():
-    return send_from_directory(os.path.join(app.root_path, 'static'),'autodiscover.xml')
+#@app.route('/autodiscover/autodiscover.xml')
+#def autodiscover():
+#    return send_from_directory(os.path.join(app.root_path, 'static'),'autodiscover.xml')
 
 @app.route('/favicon.ico')
 def favicon():
@@ -28,4 +29,15 @@ def favicon():
 @app.route('/', methods=("GET", "POST", "OPTIONS"))
 def index():
   return render_template('index.html')
+
+class MyUnauthorized(Unauthorized):
+    description = '<UNAUTHORIZED>'
+    def get_headers(self, environ):
+        """Get a list of headers."""
+        return [
+            ('Content-Type', 'text/html'),
+            ('WWW-Authenticate', 'Basic realm="Login required"'),
+        ]
+
+abort.mapping.update({404: MyUnauthorized})
 
