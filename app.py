@@ -22,7 +22,7 @@ from flask import Response
 import time
 from werkzeug.exceptions import Unauthorized
 
-@app.route('/autodiscover/autodiscover.xml')
+@app.route('/autodiscover/autodiscover.xml', methods=['GET', 'POST'])
 def autodiscover():
     print(request.headers)
     print(request.values)
