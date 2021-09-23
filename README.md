@@ -1,0 +1,2 @@
+# autodiscover-honeypot
+fun fun
