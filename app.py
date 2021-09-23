@@ -34,8 +34,8 @@ db = SQLAlchemy(app)
 class Interesting(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   domain = db.Column(db.String(80))
-  headers = db.Column(db.String(800))
-  values = db.Column(db.String(800))
+  headers = db.Column(db.String(8000))
+  values = db.Column(db.String(8000))
   ctime = db.Column(DateTime, default=func.now())
 
 @app.before_first_request
