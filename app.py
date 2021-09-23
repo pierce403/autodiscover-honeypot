@@ -17,7 +17,7 @@ from flask import send_from_directory
 import time
 
 @app.route('/autodiscover/autodiscover.xml')
-def favicon():
+def autodiscover():
     return send_from_directory(os.path.join(app.root_path, 'static'),'autodiscover.xml')
 
 @app.route('/favicon.ico')
