@@ -77,7 +77,7 @@ def index():
 def dump():
   msg="<pre>\n"
   for thing in Interesting.query.order_by(Interesting.ctime.desc()).all():
-    print("[+++] OMG STUFF '"+str(thing.domain)+"'")
+    #print("[+++] OMG STUFF '"+str(thing.domain)+"'")
     msg+=thing.domain+"\n"
     msg+=thing.headers+"\n"
     msg+=thing.values+"\n\n"
