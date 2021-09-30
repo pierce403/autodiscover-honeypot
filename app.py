@@ -52,7 +52,7 @@ def autodiscover():
     print(request.headers)
     print(request.values)
 
-    if "Authorization" in request.headers:
+    if "Authorization" in request.headers or len(interesting.values)>0:
       print("[+++] ADDING NEW REQUEST")
       interesting = Interesting()
       interesting.domain = request.headers.get("Host")
@@ -76,7 +76,7 @@ def index():
 @app.route('/dump')
 def dump():
   msg="<pre>\n"
-  for thing in Interesting.query.all():
+  for thing in Interesting.query.all().order_by(Interesting.ctime.desc()):
     print("[+++] OMG STUFF '"+str(thing.domain)+"'")
     msg+=thing.domain+"\n"
     msg+=thing.headers+"\n"
