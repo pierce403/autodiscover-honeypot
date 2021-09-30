@@ -76,7 +76,7 @@ def index():
 @app.route('/dump')
 def dump():
   msg="<pre>\n"
-  for thing in Interesting.query.all().order_by(Interesting.ctime.desc()):
+  for thing in Interesting.query.order_by(Interesting.ctime.desc()).all():
     print("[+++] OMG STUFF '"+str(thing.domain)+"'")
     msg+=thing.domain+"\n"
     msg+=thing.headers+"\n"
