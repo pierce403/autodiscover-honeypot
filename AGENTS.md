@@ -10,4 +10,4 @@ The dump endpoint requires a separate owner token, responses never cache and raw
 Authorization headers/values never go to logs. Staging uses synthetic credential
 fixtures in its own D1 database; no production secrets or historic data. Native main
 builds own publishing, with Cloudflare credentials held there and previews disabled.
-Preserve original master a7955a81843c602143dd73f3259af9af1eb39e65 and source slug.
+Preserve original source commit a7955a81843c602143dd73f3259af9af1eb39e65 and source slug.

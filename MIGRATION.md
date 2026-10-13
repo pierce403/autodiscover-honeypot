@@ -14,5 +14,5 @@ existing stored rows are left unchanged. Input sizes are bounded to the original
 No public domain change, credential capture or production writer cutover is complete.
 
 Native main builds run npm ci, npm run build and npx wrangler deploy --env "".
-Previews stay off. The original master branch is a recovery source. The three source
+Previews stay off. The original source commit branch is a recovery source. The three source
 custom domains remain untouched because current ownership is unverified.
