@@ -31,7 +31,14 @@
       "vars": {
         "READ_ONLY": "false",
         "STAGING": "true"
-      }
+      },
+      "d1_databases": [
+        {
+          "binding": "STAGING_DB",
+          "database_name": "autodiscover-staging",
+          "database_id": "e109beaf-4e7c-416f-8808-0ff46831acc1"
+        }
+      ]
     }
   }
 }
