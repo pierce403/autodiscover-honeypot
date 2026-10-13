@@ -16,3 +16,7 @@ No public domain change, credential capture or production writer cutover is comp
 Native main builds run npm ci, npm run build and npx wrangler deploy --env "".
 Previews stay off. The original source commit branch is a recovery source. The three source
 custom domains remain untouched because current ownership is unverified.
+
+The owner-approved DATABASE_URL2 identity is now in Cloudflare. Hosting uses the
+Worker host while the three custom domains remain unverified and untouched.
+Heroku web is stopped; collection stays disabled and owner recovery access is pending.
