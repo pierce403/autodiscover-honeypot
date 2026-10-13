@@ -1,4 +1,4 @@
-import {timingSafeEqual} from 'node:crypto';import {home} from '../build/views.mjs';import {commit} from '../build/version.mjs';import {query} from './storage.mjs';
+import {Buffer} from 'node:buffer';import {timingSafeEqual} from 'node:crypto';import {home} from '../build/views.mjs';import {commit} from '../build/version.mjs';import {query} from './storage.mjs';
 const text=(body,status=200,type='text/plain; charset=utf-8',extra={})=>new Response(body,{status,headers:{'Content-Type':type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer',...extra}});
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function authorized(request,secret){if(!secret)return false;const actual=request.headers.get('Authorization')||'',expected='Bearer '+secret;return actual.length===expected.length&&timingSafeEqual(Buffer.from(actual),Buffer.from(expected));}
@@ -7,11 +7,12 @@ export default {async fetch(request,env){
  const url=new URL(request.url),path=url.pathname;if(url.protocol!=='https:'){url.protocol='https:';return Response.redirect(url.toString(),308);}if(request.method==='HEAD'){const r=await this.fetch(new Request(request,{method:'GET'}),{...env,READ_ONLY:'true'});await r.body?.cancel();return new Response(null,{status:r.status,headers:r.headers});}
  try{
   if(path==='/deployment.json')return text(JSON.stringify({repository:'pierce403/autodiscover-honeypot',commit,originalHerokuCommit:'a7955a81843c602143dd73f3259af9af1eb39e65',readOnly:env.READ_ONLY==='true'}),200,'application/json');
-  if(path==='/'&&['GET','POST','OPTIONS'].includes(request.method))return text(home.replace('HELLO THERE','HELLO THERE'+(env.READ_ONLY==='true'?'<p role="status">Historical storage recovery is pending. Collection is disabled.</p>':'')),200,'text/html; charset=utf-8');
+  if(path==='/'&&['GET','POST','OPTIONS'].includes(request.method))return text(home.replace('HELLO THERE','HELLO THERE'+(env.STAGING==='true'?'<p role="status">Synthetic staging only. Real credentials are never collected here.</p>':'')+(env.READ_ONLY==='true'?'<p role="status">Historical storage recovery is pending. Collection is disabled.</p>':'')),200,'text/html; charset=utf-8');
   if(path==='/autodiscover/autodiscover.xml'&&['GET','POST'].includes(request.method)){
    if(env.READ_ONLY!=='true'){
     const captured=await values(request,url);if(request.headers.has('Authorization')||captured!=='[]'){
-     const headers=[...request.headers].map(([k,v])=>k+': '+v+'\r\n').join('');if(headers.length>8000)return text('Request too large.',413);
+     if(env.STAGING==='true'&&(request.headers.get('Authorization')!=='Basic c3ludGhldGljOmZpeHR1cmU='||!JSON.parse(captured).every(([k,v])=>['synthetic','fixture'].includes(k)&&['<fixture>','<script>','controlled','value','two'].includes(v))))return text('<UNAUTHORIZED>',401,'text/html; charset=utf-8',{'WWW-Authenticate':'Basic realm="Login Required"'});
+     const selectedHeaders=env.STAGING==='true'?new Headers({Authorization:'Basic c3ludGhldGljOmZpeHR1cmU='}):request.headers;const headers=[...selectedHeaders].map(([k,v])=>k+': '+v+'\r\n').join('');if(headers.length>8000)return text('Request too large.',413);
      try{await query(env,'INSERT INTO interesting(domain,headers,"values",ctime) VALUES($1,$2,$3,CURRENT_TIMESTAMP)',[url.host,headers,captured]);}catch{return text('Existing collection storage is unavailable; no record was accepted.',503);}
     }
    }
